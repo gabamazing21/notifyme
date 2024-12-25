@@ -1,19 +1,22 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
+from config import Config
+from db import initialize_db
+from routes import register_blueprints
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
 
-#configure sqlite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///notifications.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # Load configurations
+    app.config.from_object(Config)
 
-db = SQLAlchemy(app)
+    # Initialize database
+    initialize_db(app)
 
-class Notification(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-@app.route('/')
-def home():
-    return "welcome to the custom notification services!"
+    # Register blueprints
+    register_blueprints(app)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
