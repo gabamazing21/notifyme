@@ -1,11 +1,11 @@
 import bcrypt
 from db import DB
-from user import User
+from models.user import User
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 import uuid
 """
-this module for authencation"""
-
+this module for authencation
+"""
 
 def _hash_password(password: str) -> bytes:
     """
