@@ -6,7 +6,7 @@ class ContactService:
     @staticmethod
     def validate_contact_data(contact_data):
         """Validate contact dataa."""
-        if not contact_data.get("first_name") or not contact_data("email"):
+        if not contact_data.get("first_name") or not contact_data.get("email"):
             return False, "first_name and email are required."
         return True, None
     
@@ -21,7 +21,7 @@ class ContactService:
         contact = Contact(
             campaign_list_id = campaign_id,
             first_name = contact_data["first_name"],
-            last_name = contact_data.get["last_namae"],
+            last_name = contact_data.get("last_namae"),
             email=contact_data["email"],
             phone_number=contact_data.get("phone_number"),
             whatsapp_number=contact_data.get("whatsapp_number"),

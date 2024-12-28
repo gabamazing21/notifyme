@@ -11,7 +11,7 @@ contact_routes = Blueprint("contact_routes", __name__)
 
 @contact_routes.route("/api/campaigns/<campaigns_id>/contacts", methods=["POST"])
 @api_key_required
-def add_contact(campaign_id, current_user):
+def add_contact(current_user, campaigns_id):
     """
     Add single, bulk, or upload contacts via csv to a campaign.
     """
@@ -19,7 +19,7 @@ def add_contact(campaign_id, current_user):
     db = SessionLocal()
     try:
         
-        campaign = db.query(CampaignList).filter(CampaignList.id == campaign_id).first()
+        campaign = db.query(CampaignList).filter(CampaignList.id == campaigns_id, CampaignList.user_id == current_user.id).first()
         if not campaign:
             return jsonify(
                 {
@@ -38,7 +38,7 @@ def add_contact(campaign_id, current_user):
             if error:
                 return jsonify({"error": error}), 400
             
-            contacts, errors = ContactService.process_bulk_contacts(rows, campaign_id)
+            contacts, errors = ContactService.process_bulk_contacts(rows, campaigns_id)
             db.bulk_save_objects(contacts)
             db.commit()
 
@@ -51,7 +51,7 @@ def add_contact(campaign_id, current_user):
         data = request.get_json()
         if isinstance(data, dict):
             """if it's single contact"""
-            contact, error = ContactService.process_single_contact(data, campaign_id)
+            contact, error = ContactService.process_single_contact(data, campaigns_id)
             if error:
                 return jsonify({
                     "error": error
@@ -66,14 +66,14 @@ def add_contact(campaign_id, current_user):
         
         elif isinstance(data, list):
             """ if it's bulk json contact"""
-            contact, error = ContactService.process_bulk_contacts(data, campaign_id)
-            db.bulk_save_objects(contacts)
+            contact, error = ContactService.process_bulk_contacts(data, campaigns_id)
+            db.bulk_save_objects(contact)
             db.commit()
 
             return jsonify({
                 "message": "Contacts uploaded successfully via file.",
-                "success_count": len(contacts),
-                "errors": errors
+                "success_count": len(contact),
+                "errors": error
             }), 201
         
         else:
@@ -84,20 +84,18 @@ def add_contact(campaign_id, current_user):
     finally:
         db.close()
 
-@contact_routes.route("/api/<campaigns_id>/contacts", methods=["GET"])
+
+@contact_routes.route("/api/campaigns/<campaigns_id>/contacts", methods=["GET"])
 @api_key_required
-def add_contact(campaign_id, current_user):
-    """ endpoint to Add a single contact to a campaign"""
+def get_contact(current_user, campaigns_id):
+    """
+    Add single, bulk, or upload contacts via csv to a campaign.
+    """
 
     db = SessionLocal()
     try:
-        data = request.get_json()
         
-        # Validate required field
-        if not data.get("name") or not data.get["email"]:
-            return jsonify({"error": "first_name and email are required"}), 400
-        
-        campaign = db.query(CampaignList).filter(CampaignList.id == campaign_id).first()
+        campaign = db.query(CampaignList).filter(CampaignList.id == campaigns_id, CampaignList.user_id == current_user.id).first()
         if not campaign:
             return jsonify(
                 {
@@ -105,23 +103,28 @@ def add_contact(campaign_id, current_user):
                 }
             )
         
-        # Create the campaign List
-        contact = Contact(
-            campaign_list_id = campaign_id,
-            first_name = data["first_name"],
-            last_name = data.get["last_namae"],
-            email=data["email"],
-            phone_number=data.get("phone_number"),
-            whatsapp_number=data.get("whatsapp_number"),
-            address=data.get("address")
-            custom_fields=data.get("custom_fields", {})
-        )
-        db.add(contact)
-        db.commit()
+        # Retrieve contacts for the campaign
+        contacts = db.query(Contact).filter(Contact.campaign_list_id == campaigns_id).all()
 
-        return jsonify(
-            {"message":"Contact addedd  successfully.",
-             "contact_id": contact.id}), 201
+        # Serialiize contacts into a list of dictionaries
+
+        contact_list = [
+            {
+                "id": contact.id,
+                "first_name": contact.first_name,
+                "last_name": contact.last_name,
+                "email": contact.email,
+                "phone_number": contact.phone_number,
+                "whatsapp_number": contact.whatsapp_number,
+                "address": contact.address,
+                "custom_fields": contact.custom_fields,
+                "created_at": contact.created_at
+            }
+            for contact in contacts
+        ]
+
+        return jsonify(contact_list), 200
     
     finally:
         db.close()
+

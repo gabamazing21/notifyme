@@ -143,36 +143,3 @@ def delete_campaign(campaign_id, current_user):
         })
     finally:
         db.close()
-
-
-@campaign_routes.route("/api/campaigns/<campaign_id>", methods=["PUT"])
-@api_key_required
-def update_campaign(campaign_id, current_user):
-    """ update a single campaign."""
-
-    db = SessionLocal()
-    try:
-        data = request.get_json()
-        campaign = db.query(CampaignList).filter(CampaignList.id == campaign_id, CampaignList.user_id == current_user.id).first()
-        
-        if not campaign:
-            return jsonify(
-                {
-                    "error": "Campaign not found or does not belong to you"
-                }
-            )
-        
-        # Update fields
-        if "name" in data:
-            campaign.name = data["name"]
-        if "description" in data:
-            campaign.description = data["description"]
-        
-        db.commit()
-        
-        # Create the campaign List
-        return jsonify({
-            "message": "Campaign updated successfully",
-        })
-    finally:
-        db.close()
