@@ -25,6 +25,11 @@ class User(Base):
         back_populates="user", 
         cascade="all, delete-orphan",
         lazy="dynamic")
-
+    
+    notification_templates = relationship(
+        "NotificationTemplate",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="dynamic")
 
 

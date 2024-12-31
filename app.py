@@ -3,8 +3,10 @@ from db import initialize_db
 from routes.user_routes import user_routes
 from routes.campaign_routes import campaign_routes
 from routes.contact_routes import contact_routes
+from routes.template_routes import template_routes
 from models.contact import Contact
 from models.user import User
+from models.notification_template import NotificationTemplate
 from models.campaign_list import CampaignList
 
 
@@ -17,6 +19,7 @@ initialize_db()
 app.register_blueprint(user_routes)
 app.register_blueprint(campaign_routes)
 app.register_blueprint(contact_routes)
+app.register_blueprint(template_routes)
 
 
 if __name__ == "__main__":
