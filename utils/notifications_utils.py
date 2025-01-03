@@ -1,11 +1,12 @@
 from flask_mail import Message
 from twilio.rest import Client
+import os
 
 # twilio credentials
-account_sid = "REMOVED"
-auth_token = "REMOVED"
-twilio_phone = "+12695337617"
-whatsapp_sandbox = "+14155238886"
+account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+twilio_phone = os.getenv("TWILIO_PHONE_NUMBER")
+whatsapp_sandbox = os.getenv("TWILIO_WHATSAPP_SANDBOX")
 
 def send_mail(to_email, subject, content):
     """Send an email using Flask-Mail."""

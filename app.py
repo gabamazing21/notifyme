@@ -10,9 +10,12 @@ from models.user import User
 from models.notification_template import NotificationTemplate
 from models.campaign_list import CampaignList
 from flask_mail import Mail
+import os
+from dotenv import load_dotenv
 
 
 app = Flask(__name__)
+load_dotenv()
 
 # Flask-Mail configuration
 app.config["MAIL_SERVER"] = "smtp.sendgrid.net"
@@ -20,7 +23,7 @@ app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USE_SSL"] = False
 app.config["MAIL_USERNAME"] = "apikey"
-app.config["MAIL_PASSWORD"] = "REMOVED"
+app.config["MAIL_PASSWORD"] = os.getenv("SENDGRID_API_KEY")
 app.config["MAIL_DEFAULT_SENDER"] = "support@lokatalent.com"
 app.config["MAIL_DEBUG"] = True
 app.config["MAIL_MAX_EMAILS"] = 1000
