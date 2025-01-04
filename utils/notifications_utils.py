@@ -32,7 +32,7 @@ def send_sms(to_phone, content):
         message = client.messages.create(
             body=content,
             from_=twilio_phone,
-            to=twilio_phone
+            to=to_phone
         )
 
         print(f"SMS sent to {to_phone}: SID {message.sid}")
@@ -48,7 +48,7 @@ def send_whatsapp(to_phone, content):
         client = Client(account_sid, auth_token)
         message = client.messages.create(
             body=content,
-            from_=whatsapp_sandbox,
+            from_=f"whatsapp:{whatsapp_sandbox}",
             to=f"whatsapp:{to_phone}"
         )
 

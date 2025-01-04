@@ -89,13 +89,13 @@ def add_contact(current_user, campaigns_id):
 @api_key_required
 def get_contact(current_user, campaigns_id):
     """
-    Add single, bulk, or upload contacts via csv to a campaign.
+    get all contact in a campaign list.
     """
 
     db = SessionLocal()
     try:
-        
-        campaign = db.query(CampaignList).filter(CampaignList.id == campaigns_id, CampaignList.user_id == current_user.id).first()
+    
+        campaign = db.query(Contact).filter(CampaignList.id == campaigns_id, CampaignList.user_id == current_user.id).first()
         if not campaign:
             return jsonify(
                 {
@@ -107,6 +107,10 @@ def get_contact(current_user, campaigns_id):
         contacts = db.query(Contact).filter(Contact.campaign_list_id == campaigns_id).all()
 
         # Serialiize contacts into a list of dictionaries
+        if not contacts:
+            return jsonify({
+                "error": "contacts not found in the campaign"
+            })
 
         contact_list = [
             {
@@ -128,3 +132,81 @@ def get_contact(current_user, campaigns_id):
     finally:
         db.close()
 
+@contact_routes.route("/api/campaigns/<campaigns_id>/contacts/<contact_id>", methods=["PUT"])
+@api_key_required
+def update_contact(current_user, campaigns_id, contact_id):
+    """
+    update a contact in a campaign
+    """
+
+    db = SessionLocal()
+    try:        
+        campaign = db.query(Contact).filter(CampaignList.id == campaigns_id, CampaignList.user_id == current_user.id).first()
+        if not campaign:
+            return jsonify(
+                {
+                    "error": "Campaign not found or does not belong to you"
+                }
+            )
+        
+        # Retrieve contacts for the campaign
+        contact = db.query(Contact).filter(Contact.campaign_list_id == campaigns_id, Contact.id == contact_id).first()
+
+        if not contact:
+            return jsonify({
+                "error": "contacts not found in the campaign"
+            })
+
+        # Get the updated data from the request
+        data = request.get_json()
+        contact.first_name = data.get("first_name", contact.first_name)
+        contact.last_name = data.get("last_name", contact.last_name)
+        contact.email = data.get("email", contact.email)
+        contact.phone_number = data.get("phone_number", contact.phone_number)
+        contact.whatsapp_number = data.get("whatsapp_number", contact.whatsapp_number)
+        contact.address = data.get("address", contact.address)
+        contact.custom_fields = data.get("custom_fields", contact.custom_fields)
+        db.commit()
+        return jsonify({
+            "message": "Contact updated successfuly",
+            "contact_id": contact.id
+        }), 200
+    
+    finally:
+        db.close()
+
+@contact_routes.route("/api/campaigns/<campaigns_id>/contacts/<contact_id>", methods=["DELETE"])
+@api_key_required
+def delete_contact(current_user, campaigns_id, contact_id):
+    """
+    delete a contact in a campaign
+    """
+
+    db = SessionLocal()
+    try:        
+        campaign = db.query(Contact).filter(CampaignList.id == campaigns_id, CampaignList.user_id == current_user.id).first()
+        if not campaign:
+            return jsonify(
+                {
+                    "error": "Campaign not found or does not belong to you"
+                }
+            )
+        
+        # Retrieve contacts for the campaign
+        contact = db.query(Contact).filter(Contact.campaign_list_id == campaigns_id, Contact.id == contact_id).first()
+
+        if not contact:
+            return jsonify({
+                "error": "contacts not found in the campaign"
+            })
+
+        # Get the updated data from the request
+        db.delete(contact)
+        db.commit()
+        return jsonify({
+            "message": "Contact deleted successfuly",
+            "contact_id": contact.id
+        }), 200
+    
+    finally:
+        db.close()
