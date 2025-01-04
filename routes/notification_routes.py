@@ -49,12 +49,7 @@ def send_notification(campaign_id, current_user):
             )
         
         # Get contacts
-        contact_ids = data.get("contact_ids", [])
-        if contact_ids:
-            contacts = db.query(Contact).filter(Contact.id in contact_ids, Contact.campaign_list_id == campaign_id).all()
-        else:
-            contacts = db.query(Contact).filter(Contact.campaign_list_id == campaign_id).all()
-        
+        contacts = db.query(Contact).filter(Contact.campaign_list_id == campaign_id).all()
         if not contacts:
             return jsonify({"error": "No contacts found to send notifications."}), 404
         
