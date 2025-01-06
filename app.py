@@ -1,10 +1,13 @@
-from flask import Flask
+from tasks import schedule_task
+from celery_instance import celery_app
+from flask import Flask, jsonify
 from db import initialize_db
 from routes.user_routes import user_routes
 from routes.campaign_routes import campaign_routes
 from routes.contact_routes import contact_routes
 from routes.template_routes import template_routes
 from routes.notification_routes import notification_routes
+from routes.scheduled_routes import scheduled_routes
 from models.contact import Contact
 from models.user import User
 from models.notification_template import NotificationTemplate
@@ -14,8 +17,11 @@ import os
 from dotenv import load_dotenv
 
 
+
+
 app = Flask(__name__)
 load_dotenv()
+
 
 # Flask-Mail configuration
 app.config["MAIL_SERVER"] = "smtp.sendgrid.net"
@@ -39,7 +45,7 @@ app.register_blueprint(campaign_routes)
 app.register_blueprint(contact_routes)
 app.register_blueprint(template_routes)
 app.register_blueprint(notification_routes)
-
+app.register_blueprint(scheduled_routes)
 
 if __name__ == "__main__":
     app.run(debug=True)
