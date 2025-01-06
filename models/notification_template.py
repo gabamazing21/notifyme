@@ -18,4 +18,5 @@ class NotificationTemplate(Base):
 
     # Relationships
     user = relationship("User", back_populates="notification_templates")
+    scheduled = relationship("Scheduled", back_populates="notification_templates")
     

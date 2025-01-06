@@ -18,3 +18,4 @@ class CampaignList(Base):
     # Relationships
     user = relationship("User", back_populates="campaign_lists")
     contacts = relationship("Contact", back_populates="campaign_list", cascade="all, delete-orphan")
+    scheduled = relationship("Scheduled", back_populates="campaign_lists")

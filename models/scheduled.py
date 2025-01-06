@@ -17,5 +17,5 @@ class Scheduled(Base):
 
     # relationship
     user = relationship("User", back_populates="scheduled")
-    campaign = relationship("CampaignList", back_populates="scheduled")
-    template = relationship("NotificationTemplate", back_populates="scheduled")
+    campaign_lists = relationship("CampaignList", back_populates="scheduled")
+    notification_templates = relationship("NotificationTemplate", back_populates="scheduled")

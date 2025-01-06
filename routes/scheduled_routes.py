@@ -10,7 +10,7 @@ from utils.file_utils import FileUtils
 from services.contact_service import ContactService
 from utils.notifications_utils import send_mail, send_sms, send_whatsapp
 from datetime import datetime
-from tasks import schedule_task
+
 
 scheduled_routes = Blueprint("scheduled_routes", __name__)
 
@@ -27,8 +27,8 @@ def schedule_notification(campaign_id, current_user):
 
         # Validate request body
 
-        if not data.get("template_id") or not data.get("method") or data.get("scheduled_time"):
-            return jsonify({"error": "template_id and method are required."}), 400
+        if not data.get("template_id") or not data.get("method") or not data.get("scheduled_time"):
+            return jsonify({"error": "template_id, method and scheduled time are required."}), 400
         
         method = data["method"]
         if method not in ["email", "sms", "whatsapp"]:
@@ -36,8 +36,8 @@ def schedule_notification(campaign_id, current_user):
         
         # validate the scheduled time
         try:
-            schduled_time = datetime.strptime(data["scheduled_time"], "%Y-%m-%d %H:%M:%S")
-            if schduled_time <= datetime.now():
+            scheduled_time = datetime.strptime(data["scheduled_time"], "%Y-%m-%d %H:%M:%S")
+            if scheduled_time <= datetime.now():
                 return jsonify({
                     "error": "Scheduled time must be in the future."
                 })
@@ -77,7 +77,7 @@ def schedule_notification(campaign_id, current_user):
             campaign_id = campaign_id,
             template_id = data["template_id"],
             method=method,
-            schduled_time=schduled_time,
+            scheduled_time=scheduled_time,
             status="pending"
         )
         db.add(scheduled)
@@ -85,11 +85,16 @@ def schedule_notification(campaign_id, current_user):
 
         # schedule the celery task to run at the specified time
 
-        schedule_task(
-            args=[scheduled.id],
-            eta=schduled_time
-        )
+        countdown = (scheduled_time - datetime.now()).total_seconds()
 
+        print(f"Scheduling task for: {scheduled_time} (local time)")
+        from tasks import schedule_task
+        schedule_task.apply_async(
+            args=[scheduled.id],
+            countdown=countdown
+        )
+        
+        print(f"Task scheduled for {scheduled_time}")
   
         return jsonify({
             "message": "Notification scheduled successfuly.", 
