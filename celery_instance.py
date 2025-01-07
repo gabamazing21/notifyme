@@ -17,4 +17,9 @@ def celery_init_app(app: Flask) -> Celery:
          "task_ignore_result": True,
          "timezone":"Africa/Lagos"
          })
+    celery_app.conf.broker_transport_options = {
+        "ssl": {
+            "ssl_cert_reqs": "CERT_NONE"
+        }
+    }
     celery_app.set_default()
