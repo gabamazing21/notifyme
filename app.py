@@ -1,4 +1,4 @@
-from tasks import schedule_task
+from celery_instance import celery_init_app
 from flask import Flask, jsonify
 from db import initialize_db
 from routes.user_routes import user_routes
@@ -16,11 +16,8 @@ from flask_mail import Mail
 import os
 from dotenv import load_dotenv
 
-
-
-
-
 app = Flask(__name__)
+celery_app = celery_init_app(app)
 load_dotenv()
 
 # app.config.update(

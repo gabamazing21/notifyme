@@ -10,6 +10,7 @@ from utils.file_utils import FileUtils
 from services.contact_service import ContactService
 from utils.notifications_utils import send_mail, send_sms, send_whatsapp
 from datetime import datetime
+from tasks import schedule_task
 
 
 scheduled_routes = Blueprint("scheduled_routes", __name__)
@@ -88,7 +89,6 @@ def schedule_notification(campaign_id, current_user):
         countdown = (scheduled_time - datetime.now()).total_seconds()
 
         print(f"Scheduling task for: {scheduled_time} (local time)")
-        from tasks import schedule_task
         schedule_task.apply_async(
             args=[scheduled.id],
             countdown=countdown
