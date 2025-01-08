@@ -13,8 +13,8 @@ import os
 from models.user import User
 
 # Define the database engin
-DATABASE_URL = os.getenv("DATBASE_URL")
-engine = create_engine(DATABASE_URL)
+DATABASE_URL = os.getenv("DATABASE_URL")
+engine = create_engine(DATABASE_URL, echo=True)
 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
