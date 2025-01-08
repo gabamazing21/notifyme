@@ -1,11 +1,12 @@
 from celery import Celery, Task
 from flask import Flask
 import os
+import ssl
 
 # Configure celery broker (Redis) and result backend
 redis_url = os.getenv("CELERY_BROKER_URL")
-CELERY_BROKER_URL = f"{redis_url}?ssl_cert_reqs=required"
-CELERY_RESULT_BACKEND = f"{redis_url}?ssl_cert_reqs=required"
+CELERY_BROKER_URL = redis_url
+CELERY_RESULT_BACKEND = redis_url
 def celery_init_app(app: Flask) -> Celery:
     class FlaskTask(Task):
         def __call__(self, *args: object, **kwargs: object) -> object:
@@ -16,6 +17,10 @@ def celery_init_app(app: Flask) -> Celery:
         {"broker_url":CELERY_BROKER_URL,
          "result_backend":CELERY_RESULT_BACKEND,
          "task_ignore_result": True,
-         "timezone":"Africa/Lagos"
+         "timezone":"Africa/Lagos",
+         "broker_use_ssl": {
+             "ssl_cert_reqs": ssl.CERT_REQUIRED  # Change to "CERT_REQUIRED" for strict SSL verification
+            }
          })
     celery_app.set_default()
+    return celery_app
