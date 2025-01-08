@@ -11,9 +11,9 @@ class Scheduled(Base):
     user_id = Column(String(36), ForeignKey('users.id'), nullable=False)
     campaign_id = Column(String(30), ForeignKey('campaign_lists.id'), nullable=False)
     template_id = Column(String(30), ForeignKey('notification_templates.id'), nullable=False)
-    method = Column(Enum("sms", "whatsapp", "email"), nullable=False)
+    method = Column(Enum("sms", "whatsapp", "email", name="method_enum"), nullable=False)
     scheduled_time = Column(DateTime, nullable=False)
-    status = Column(Enum("pending", "sent", default="pending"))
+    status = Column(Enum("pending", "sent", name="status_enum"), default="pending")
 
     # relationship
     user = relationship("User", back_populates="scheduled")

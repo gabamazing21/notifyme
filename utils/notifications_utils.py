@@ -1,7 +1,9 @@
 from flask_mail import Message
 from twilio.rest import Client
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 # twilio credentials
 account_sid = os.getenv("TWILIO_ACCOUNT_SID")
 auth_token = os.getenv("TWILIO_AUTH_TOKEN")

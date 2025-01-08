@@ -2,8 +2,10 @@ from celery import Celery, Task
 from flask import Flask
 import os
 import ssl
+from dotenv import load_dotenv
 
 # Configure celery broker (Redis) and result backend
+load_dotenv()
 redis_url = os.getenv("CELERY_BROKER_URL")
 CELERY_BROKER_URL = redis_url
 CELERY_RESULT_BACKEND = redis_url
