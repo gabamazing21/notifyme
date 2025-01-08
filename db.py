@@ -8,11 +8,12 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
 from typing import Any
+import os
 
 from models.user import User
 
-# Define the database engine
-DATABASE_URL = "sqlite:///notifications.db"
+# Define the database engin
+DATABASE_URL = os.getenv("DATBASE_URL")
 engine = create_engine(DATABASE_URL)
 
 
