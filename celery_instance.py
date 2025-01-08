@@ -3,8 +3,8 @@ from flask import Flask
 import os
 
 # Configure celery broker (Redis) and result backend
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+CELERY_BROKER_URL = f"{os.getenv("CELERY_BROKER_URL")}?ssl_cert_reqs=required"
+CELERY_RESULT_BACKEND = f"{os.getenv("CELERY_RESULT_BACKEND")}?ssl_cert_reqs=required"
 def celery_init_app(app: Flask) -> Celery:
     class FlaskTask(Task):
         def __call__(self, *args: object, **kwargs: object) -> object:
@@ -17,9 +17,4 @@ def celery_init_app(app: Flask) -> Celery:
          "task_ignore_result": True,
          "timezone":"Africa/Lagos"
          })
-    celery_app.conf.broker_transport_options = {
-        "ssl": {
-            "ssl_cert_reqs": "CERT_NONE"
-        }
-    }
     celery_app.set_default()
