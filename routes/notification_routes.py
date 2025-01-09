@@ -64,11 +64,12 @@ def send_notification(campaign_id, current_user):
                     # Replace placeholders in the templates
 
                     content = template.content.format(
-                        name=contact.first_name,
+                        first_name=contact.first_name,
+                        last_name=contact.last_name,
                         email=contact.email, 
                         phone=contact.phone_number)
                     subject = template.subject.format(
-                        name=contact.first_name,
+                        first_name=contact.first_name,
                         email=contact.email, 
                         phone=contact.phone_number)
                     
