@@ -17,6 +17,7 @@ def celery_init_app(app: Flask) -> Celery:
     celery_app = Celery(app.name, task_cls=FlaskTask)
     celery_app.conf.update(
         {"broker_url":CELERY_BROKER_URL,
+         "broker_connection_retry_on_startup": True,
          "result_backend":CELERY_RESULT_BACKEND,
          "task_ignore_result": True,
          "timezone":"Africa/Lagos",
