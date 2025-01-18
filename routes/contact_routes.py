@@ -71,7 +71,7 @@ def add_contact(current_user, campaigns_id):
             db.commit()
 
             return jsonify({
-                "message": "Contacts uploaded successfully via file.",
+                "message": "Contacts uploaded successfully via json.",
                 "success_count": len(contact),
                 "errors": error
             }), 201
