@@ -18,11 +18,24 @@ def celery_init_app(app: Flask) -> Celery:
     celery_app.conf.update(
         {"broker_url":CELERY_BROKER_URL,
          "broker_connection_retry_on_startup": True,
-         "result_backend":CELERY_RESULT_BACKEND,
+         "result_backend": None,
          "task_ignore_result": True,
          "timezone":"Africa/Lagos",
+         # reduce command per day because of upstash
+         "task_acks_late": True, # Acknowledge tasks after completion
+         "task_default_retry_delay": 10, # Retry delay in seconds
+         "max_retries": 3, # Limit retries per task
+         "task_always_eager": False,
+         "broker_transport_options": {
+             "visibility_timeout": 3000,
+         },
+         "worker_send_task_events": False,
+         "worker_prefetch_multiplier": 1,
+         "broker_heartbeat": 30,
+         "worker_log_format": "%(asctime)s - %(levelname)s - %(message)s",
+         # optional debugging logs
          "broker_use_ssl": {
-             "ssl_cert_reqs": ssl.CERT_REQUIRED  # Change to "CERT_REQUIRED" for strict SSL verification
+             "ssl_cert_reqs": ssl.CERT_REQUIRED
             }
          })
     celery_app.set_default()
