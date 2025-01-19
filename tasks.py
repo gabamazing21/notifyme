@@ -7,6 +7,7 @@ from models.contact import Contact
 from models.notification_template import NotificationTemplate
 from models.campaign_list import CampaignList
 import logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
