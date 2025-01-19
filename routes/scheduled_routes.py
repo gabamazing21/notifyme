@@ -14,6 +14,10 @@ from tasks import schedule_task
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+from datetime import datetime
+import pytz
+
+app_timezone = pytz.timezone("Africa/Lagos")
 
 
 scheduled_routes = Blueprint("scheduled_routes", __name__)
@@ -41,7 +45,9 @@ def schedule_notification(campaign_id, current_user):
         # validate the scheduled time
         try:
             scheduled_time = datetime.strptime(data["scheduled_time"], "%Y-%m-%d %H:%M:%S")
-            if scheduled_time <= datetime.now():
+            scheduled_time = app_timezone(scheduled_time)
+            current_time = datetime.now(app_timezone)
+            if scheduled_time <= current_time:
                 return jsonify({
                     "error": "Scheduled time must be in the future."
                 })
@@ -89,7 +95,7 @@ def schedule_notification(campaign_id, current_user):
 
         # schedule the celery task to run at the specified time
 
-        countdown = (scheduled_time - datetime.now()).total_seconds()
+        countdown = (scheduled_time - current_time).total_seconds()
 
         logger.info(f"Scheduling task for: {scheduled_time} (local time)")
         schedule_task.apply_async(
@@ -97,7 +103,7 @@ def schedule_notification(campaign_id, current_user):
             countdown=countdown
         )
         
-        logger.info(f"Task scheduled for {countdown}")
+        logger.info(f"Task scheduled for {scheduled_time} (local time)")
   
         return jsonify({
             "message": "Notification scheduled successfuly.", 
