@@ -11,6 +11,9 @@ from services.contact_service import ContactService
 from utils.notifications_utils import send_mail, send_sms, send_whatsapp
 from datetime import datetime
 from tasks import schedule_task
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.logger.getLogger(__name__)
 
 
 scheduled_routes = Blueprint("scheduled_routes", __name__)
@@ -88,13 +91,13 @@ def schedule_notification(campaign_id, current_user):
 
         countdown = (scheduled_time - datetime.now()).total_seconds()
 
-        print(f"Scheduling task for: {scheduled_time} (local time)")
+        logger.info(f"Scheduling task for: {scheduled_time} (local time)")
         schedule_task.apply_async(
             args=[scheduled.id],
             countdown=countdown
         )
         
-        print(f"Task scheduled for {scheduled_time}")
+        logger.info(f"Task scheduled for {countdown}")
   
         return jsonify({
             "message": "Notification scheduled successfuly.", 
