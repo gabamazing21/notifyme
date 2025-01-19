@@ -7,8 +7,6 @@ from models.contact import Contact
 from models.notification_template import NotificationTemplate
 from models.campaign_list import CampaignList
 import logging
-from sqlalchemy.orm import joinedload
-
 logger = logging.getLogger(__name__)
 
 
@@ -39,6 +37,7 @@ def schedule_task(scheduled_id):
         template = scheduled.notification_templates
 
         # Sed notification based on the method
+        
         if scheduled.method == "email":
             for contact in contacts:
                 send_mail(contact.email, template.subject, template.content)

@@ -12,8 +12,7 @@ from utils.notifications_utils import send_mail, send_sms, send_whatsapp
 from datetime import datetime
 from tasks import schedule_task
 import logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.logger.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 scheduled_routes = Blueprint("scheduled_routes", __name__)
