@@ -19,6 +19,7 @@ def schedule_task(scheduled_id):
     Args:
         scheduled_id(str): The ID of the scheduled notification.
     """
+    logger.info(f"Executing schedule tsk with ID: {scheduled_id}")
     
     db = SessionLocal()
     try:
@@ -38,6 +39,7 @@ def schedule_task(scheduled_id):
         template = scheduled.notification_templates
 
         # Sed notification based on the method
+        
         
         if scheduled.method == "email":
             for contact in contacts:

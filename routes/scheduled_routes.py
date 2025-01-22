@@ -45,7 +45,7 @@ def schedule_notification(campaign_id, current_user):
         # validate the scheduled time
         try:
             scheduled_time = datetime.strptime(data["scheduled_time"], "%Y-%m-%d %H:%M:%S")
-            scheduled_time = app_timezone(scheduled_time)
+            scheduled_time = app_timezone.localize(scheduled_time)
             current_time = datetime.now(app_timezone)
             if scheduled_time <= current_time:
                 return jsonify({
@@ -96,6 +96,9 @@ def schedule_notification(campaign_id, current_user):
         # schedule the celery task to run at the specified time
 
         countdown = (scheduled_time - current_time).total_seconds()
+        logger.info(f"Scheduled time (local): {scheduled_time}")
+        logger.info(f"Current time (local): {current_time}")
+        logger.info(f"Countdown (seconds): {countdown}")
 
         logger.info(f"Scheduling task for: {scheduled_time} (local time)")
         schedule_task.apply_async(
