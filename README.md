@@ -4,9 +4,9 @@ NotifyMe is a custom notification service that allows developers and businesses 
 
 ## Testing the API
 
-To test the API, you can import the Postman collection:
+To test the API, you can access the Postman collection:
 
-[Download Postman Collection](https://www.postman.com/altimetry-observer-94364033/notifyme-api-workspace)
+[Postman Collection](https://www.postman.com/altimetry-observer-94364033/notifyme-api-workspace/collection/cvj5uxc/notifyme?action=share&source=copy-link&creator=40856746)
 
 ## Features
 
@@ -422,4 +422,19 @@ curl -X POST "http://127.0.0.1:5000/api/campaigns/<campaign_id>/send" \
   "error": "Campaign not found or does not belong to you."
 }
 
+## Important Notes for Reviewers
+
+1. **Deployment Information**:
+   - The API is deployed on a **Render free instance**, which may experience delays when the server is starting after being idle. Please allow a few seconds for the initial request to be processed.
+
+2. **Scheduling System**:
+   - The scheduling service is powered by **Google Cloud VM** with **Celery** and uses **Upstash Redis (free tier)** as the broker.
+   - Since Upstash has a daily free limit of 10,000 commands, the scheduling service may hit its limit during testing if many tasks are queued. If this occurs, you may see unexpected behavior.
+
+3. **Expected Behavior**:
+   - Once the Render server is active, API requests should process without issues.
+   - Scheduled tasks should execute as expected, but testing under high load or after Upstash limits are reached may result in delays or errors.
+
+4. **Workarounds**:
+   - If delays or limits are encountered, please reach out to me for assistance or retry after a short interval.
 
