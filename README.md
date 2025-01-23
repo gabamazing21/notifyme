@@ -421,7 +421,7 @@ curl -X POST "http://127.0.0.1:5000/api/campaigns/<campaign_id>/send" \
 {
   "error": "Campaign not found or does not belong to you."
 }
-
+```
 ## Important Notes for Reviewers
 
 1. **Deployment Information**:
