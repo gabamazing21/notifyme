@@ -2,6 +2,12 @@
 
 NotifyMe is a custom notification service that allows developers and businesses to send notifications via **email**, **SMS**, and **WhatsApp**. It provides robust APIs for managing campaigns, contacts, and templates, and supports scheduling notifications.
 
+## Testing the API
+
+To test the API, you can import the Postman collection:
+
+[Download Postman Collection](https://www.postman.com/altimetry-observer-94364033/notifyme-api-workspace)
+
 ## Features
 
 - **User Authentication**: API key-based authentication.
